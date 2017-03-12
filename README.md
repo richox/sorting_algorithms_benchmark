@@ -1,1 +1,1 @@
-# sorting_algorithms_benchmark
+# sorting algorithms benchmark
