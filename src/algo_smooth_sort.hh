@@ -18,7 +18,7 @@ struct SmoothSortAlgorithm {
         return "O(nlogn)";
     }
     static inline const char* getAlgorithmSpaceComplex() {
-        return "O(logn)";
+        return "O(1)";
     }
 
     static inline unsigned getLeonardo(int i) {

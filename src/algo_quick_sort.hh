@@ -19,7 +19,7 @@ struct QuickSortAlgorithm {
         return "O(n^2)";
     }
     static inline const char* getAlgorithmSpaceComplex() {
-        return "O(logn)";
+        return "O(1)";
     }
     static const int NAIVE_INSERT_LIMIT = 48;
 
