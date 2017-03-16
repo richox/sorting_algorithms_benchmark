@@ -44,15 +44,13 @@ struct LibrarySortAlgorithm {
                 std::swap(elemAt(pos), elemAt(0));
                 next[pos] = next[0];
                 next[0] = pos;
-                continue;
+            } else {  // insert
+                while (next[r] >= 0 && elemAt(next[r]) < elemAt(pos)) {
+                    r = next[r];
+                }
+                next[pos] = next[r];
+                next[r] = pos;
             }
-
-            // insert
-            while (next[r] >= 0 && elemAt(next[r]) < elemAt(pos)) {
-                r = next[r];
-            }
-            next[pos] = next[r];
-            next[r] = pos;
 
             // rebalance
             if (pos > sorted * 3 || pos == size - 1) {
