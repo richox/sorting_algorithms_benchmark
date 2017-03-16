@@ -23,7 +23,7 @@ struct InplaceMergeSortAlgorithm {
     static inline const char* getAlgorithmSpaceComplex() {
         return "O(1)";
     }
-    static const int NAIVE_INSERT_LIMIT = 96;
+    static const int NAIVE_INSERT_LIMIT = 64;
 
     template <typename TValue, typename TIndex, typename TElemAt> static inline void swapBlock(
             TElemAt elemAt,
@@ -51,22 +51,26 @@ struct InplaceMergeSortAlgorithm {
             TIndex insertPos = l;
             TIndex pos1 = a;
             TIndex pos2 = m;
-            while (pos1 < a + size2 && pos2 < r) {
-                std::swap(elemAt(insertPos++), elemAt(elemAt(pos1) < elemAt(pos2) ? pos1++ : pos2++));
+            while (size1 > 0 && size2 > 0) {
+                std::swap(elemAt(insertPos++), elemAt(elemAt(pos1) < elemAt(pos2)
+                            ? (size1--, pos1++)
+                            : (size2--, pos2++)));
             }
-            while (pos1 < a + size2) std::swap(elemAt(insertPos++), elemAt(pos1++));
-            while (pos2 < r)         std::swap(elemAt(insertPos++), elemAt(pos2++));
+            while (size1-- > 0) std::swap(elemAt(insertPos++), elemAt(pos1++));
+            while (size2-- > 0) std::swap(elemAt(insertPos++), elemAt(pos2++));
 
         } else {
             swapBlock<TValue, TIndex>(elemAt, m, a, size2);
             TIndex insertPos = r - 1;
-            TIndex pos1 = a + size2 - 1;
-            TIndex pos2 = m - 1;
-            while (pos1 >= a && pos2 >= l) {
-                std::swap(elemAt(insertPos--), elemAt(elemAt(pos1) > elemAt(pos2) ? pos1-- : pos2--));
+            TIndex pos1 = m - 1;
+            TIndex pos2 = a + size2 - 1;
+            while (size1 > 0 && size2 > 0) {
+                std::swap(elemAt(insertPos--), elemAt(elemAt(pos1) > elemAt(pos2)
+                            ? (size1--, pos1--)
+                            : (size2--, pos2--)));
             }
-            while (pos1 >= a) std::swap(elemAt(insertPos--), elemAt(pos1--));
-            while (pos2 >= l) std::swap(elemAt(insertPos--), elemAt(pos2--));
+            while (size1-- > 0) std::swap(elemAt(insertPos--), elemAt(pos1--));
+            while (size2-- > 0) std::swap(elemAt(insertPos--), elemAt(pos2--));
         }
     }
 
@@ -127,16 +131,58 @@ struct InplaceMergeSortAlgorithm {
                 blockHead(blockNum - 2) + tailSize);
     }
 
-    template <typename TValue, typename TIndex, typename TElemAt> static inline void sort(TElemAt elemAt, TIndex size) {
-        for (TIndex l = 0; l < size; l += NAIVE_INSERT_LIMIT) {
-            naiveInsertionSort<TValue, TIndex>(elemAt, l, std::min(l + NAIVE_INSERT_LIMIT, size));
+    template<typename TIndex> static inline TIndex getMergedBlockSize(TIndex index) {
+        TIndex blockSize = 1;
+        index++;
+
+        while (index % 2 == 0) {
+            index /= 2;
+            blockSize *= 2;
         }
-        for (TIndex stepWidth = NAIVE_INSERT_LIMIT; stepWidth < size; stepWidth *= 2) {
-            for (TIndex l = 0; l + stepWidth < size; l += stepWidth * 2) {
-                TIndex m = l + stepWidth;
-                TIndex r = std::min(m + stepWidth, size);
-                mergeInplace<TValue, TIndex>(elemAt, l, m, r);
+        return blockSize;
+    }
+
+    template <typename TValue, typename TIndex, typename TElemAt> static inline void sort(TElemAt elemAt, TIndex size) {
+        TIndex numBlocks = size / NAIVE_INSERT_LIMIT + (size % NAIVE_INSERT_LIMIT != 0);
+
+        for (TIndex i = 0; i < numBlocks; i++) {
+            TIndex bl = i * NAIVE_INSERT_LIMIT;
+            TIndex br = std::min((i + 1) * NAIVE_INSERT_LIMIT, size);
+            naiveInsertionSort<TValue, TIndex>(elemAt, bl, br);
+
+            for (TIndex mergedBlockSize = 2; (i + 1) % mergedBlockSize == 0; mergedBlockSize *= 2) {
+                TIndex l = (i + 1 - mergedBlockSize) * NAIVE_INSERT_LIMIT;
+                TIndex m = std::min(l + mergedBlockSize / 2 * NAIVE_INSERT_LIMIT, size);
+                TIndex r = std::min(m + mergedBlockSize / 2 * NAIVE_INSERT_LIMIT, size);
+                if (l < m && m < r) {
+                    if (r - m < size - r) {
+                        mergeWithAuxSpace<TValue, TIndex>(elemAt, l, m, r, r);
+                    } else {
+                        mergeInplace<TValue, TIndex>(elemAt, l, m, r);
+                    }
+                }
             }
+        }
+
+        auto getLastUnmergedBlock = [](TIndex numBlocks) {
+            for (TIndex mergedBlockSize = 2; mergedBlockSize < numBlocks; mergedBlockSize *= 2) {
+                if (numBlocks % mergedBlockSize != 0) {
+                    return mergedBlockSize / 2;
+                }
+            }
+            return numBlocks;
+        };
+
+        while (true) {
+            TIndex b1 = getLastUnmergedBlock(numBlocks);
+            TIndex b2 = getLastUnmergedBlock(numBlocks - b1);
+            if (b1 < 1 || b2 < 1) {
+                break;
+            }
+            TIndex l = (numBlocks - b1 - b2) * NAIVE_INSERT_LIMIT;
+            TIndex m = (numBlocks - b1) * NAIVE_INSERT_LIMIT;
+            mergeInplace<TValue, TIndex>(elemAt, l, m, size);
+            numBlocks -= b1;
         }
     }
 };
