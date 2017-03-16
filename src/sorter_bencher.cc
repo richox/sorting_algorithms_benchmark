@@ -55,8 +55,13 @@ struct SorterBencher {
     }
 };
 
-int main() {
-    SorterBencher bencher(1000000);
+int main(int argc, char** argv) {
+    int benchSize = 1000000;  // as default
+    if (argc == 2) {
+        benchSize = std::atoi(argv[1]);
+    }
+
+    SorterBencher bencher(benchSize);
     bencher.bench(Sorter<QuickSortAlgorithm>());
     bencher.bench(Sorter<MergeSortAlgorithm>());
     bencher.bench(Sorter<InplaceMergeSortAlgorithm>());
