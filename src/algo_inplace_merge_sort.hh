@@ -26,7 +26,7 @@ struct InplaceMergeSortAlgorithm {
     static inline const char* getStability() {
         return "No";
     }
-    static const int NAIVE_INSERT_LIMIT = 64;
+    static const int NAIVE_INSERT_LIMIT = 16;
 
     template <typename TValue, typename TIndex, typename TElemAt> static inline void swapBlock(
             TElemAt elemAt,
