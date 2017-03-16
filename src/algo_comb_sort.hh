@@ -21,6 +21,9 @@ struct CombSortAlgorithm {
     static inline const char* getAlgorithmSpaceComplex() {
         return "O(1)";
     }
+    static inline const char* getStability() {
+        return "No";
+    }
     static const int NAIVE_INSERT_LIMIT = 48;
 
     template <typename TValue, typename TIndex, typename TElemAt> static inline void sort(TElemAt elemAt, TIndex size) {

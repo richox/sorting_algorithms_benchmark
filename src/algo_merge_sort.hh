@@ -21,6 +21,9 @@ struct MergeSortAlgorithm {
     static inline const char* getAlgorithmSpaceComplex() {
         return "O(n)";
     }
+    static inline const char* getStability() {
+        return "Yes";
+    }
     static const int NAIVE_INSERT_LIMIT = 48;
 
     template <typename TValue, typename TIndex, typename TElemAt> static inline void sort(TElemAt elemAt, TIndex size) {

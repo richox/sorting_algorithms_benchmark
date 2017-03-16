@@ -20,6 +20,9 @@ struct HeapSortAlgorithm {
     static inline const char* getAlgorithmSpaceComplex() {
         return "O(1)";
     }
+    static inline const char* getStability() {
+        return "No";
+    }
 
     template<typename TValue, typename TIndex, typename TElemAt> void sort(TElemAt elemAt, int size) {
         TIndex top = size / 2;

@@ -45,12 +45,13 @@ struct SorterBencher {
         if (dataset != randomTestDatasetSorted) {
             fprintf(stderr, "%s: bad sorting result\n", sorter.getAlgorithmName());
         }
-        fprintf(stderr, "%-16s >> best: %-8s | avg: %-8s | worst: %-8s | space: %-4s >> cost time: %ldms\n",
+        fprintf(stderr, "%-16s >> best: %-8s | avg: %-8s | worst: %-8s | space: %-4s | stable: %3s >> cost time: %ldms\n",
                 sorter.getAlgorithmName(),
                 sorter.getAlgorithmBestTimeComplex(),
                 sorter.getAlgorithmAvgTimeComplex(),
                 sorter.getAlgorithmWorstTimeComplex(),
                 sorter.getAlgorithmSpaceComplex(),
+                sorter.getStability(),
                 timeCostMillis);
     }
 };

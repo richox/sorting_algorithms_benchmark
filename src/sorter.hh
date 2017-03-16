@@ -19,6 +19,9 @@ template <typename SortAlgorithm> struct Sorter {
     static inline const char* getAlgorithmSpaceComplex() {
         return SortAlgorithm::getAlgorithmSpaceComplex();
     }
+    static inline const char* getStability() {
+        return SortAlgorithm::getStability();
+    }
 
     template<
         typename It,
