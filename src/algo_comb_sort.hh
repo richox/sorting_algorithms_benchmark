@@ -28,19 +28,15 @@ struct CombSortAlgorithm {
 
     template <typename TValue, typename TIndex, typename TElemAt> static inline void sort(TElemAt elemAt, TIndex size) {
         TIndex delta = size / 2;
-        int sorted = 0;
 
-        while (!sorted) {
+        while (true) {
             if ((delta /= 1.3) < 48) {
                 naiveInsertionSort<TValue, TIndex>(elemAt, 0, size);
                 return;
             }
-            sorted = 1;
-
             for (TIndex i = 0; i + delta < size; i++) {
                 if (elemAt(i) > elemAt(i + delta)) {
                     std::swap(elemAt(i), elemAt(i + delta));
-                    sorted = 0;
                 }
             }
         }
