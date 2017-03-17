@@ -31,7 +31,7 @@ struct MergeSortAlgorithm {
         int round = 0;
 
         for (TIndex l = 0; l < size; l += NAIVE_INSERT_LIMIT) {
-            naiveInsertionSort<TValue, TIndex>(elemAt, l, std::min(l + NAIVE_INSERT_LIMIT, size));
+            naiveInsertionSort<TValue>(elemAt, l, std::min(l + NAIVE_INSERT_LIMIT, size));
         }
 
         for (TIndex stepWidth = NAIVE_INSERT_LIMIT; stepWidth < size; stepWidth *= 2) {

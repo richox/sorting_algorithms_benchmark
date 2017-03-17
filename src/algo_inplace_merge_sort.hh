@@ -50,7 +50,7 @@ struct InplaceMergeSortAlgorithm {
         TIndex size2 = r - m;
 
         if ((m - l) <= (r - m)) {
-            swapBlock<TValue, TIndex>(elemAt, l, a, size1);
+            swapBlock<TValue>(elemAt, l, a, size1);
             TIndex insertPos = l;
             TIndex pos1 = a;
             TIndex pos2 = m;
@@ -63,7 +63,7 @@ struct InplaceMergeSortAlgorithm {
             while (size2-- > 0) std::swap(elemAt(insertPos++), elemAt(pos2++));
 
         } else {
-            swapBlock<TValue, TIndex>(elemAt, m, a, size2);
+            swapBlock<TValue>(elemAt, m, a, size2);
             TIndex insertPos = r - 1;
             TIndex pos1 = m - 1;
             TIndex pos2 = a + size2 - 1;
@@ -89,7 +89,7 @@ struct InplaceMergeSortAlgorithm {
 
         // swap middle block with blockNum-2 block
         if ((m - l) / blockSize < blockNum - 2) {
-            swapBlock<TValue, TIndex>(elemAt, blockHead((m - l) / blockSize), blockHead(blockNum - 2), blockSize);
+            swapBlock<TValue>(elemAt, blockHead((m - l) / blockSize), blockHead(blockNum - 2), blockSize);
         }
 
         // sort ordered blocks with first and last elements
@@ -103,13 +103,13 @@ struct InplaceMergeSortAlgorithm {
                 }
             }
             if (minBlockId != insertBlockId) {
-                swapBlock<TValue, TIndex>(elemAt, blockHead(insertBlockId), blockHead(minBlockId), blockSize);
+                swapBlock<TValue>(elemAt, blockHead(insertBlockId), blockHead(minBlockId), blockSize);
             }
         }
 
         // merge each block pairs
         for (TIndex blockId = 1; blockId < blockNum - 2; blockId++) {
-            mergeWithAuxSpace<TValue, TIndex>(
+            mergeWithAuxSpace<TValue>(
                     elemAt,
                     blockHead(blockId - 1),
                     blockHead(blockId),
@@ -118,17 +118,17 @@ struct InplaceMergeSortAlgorithm {
         }
 
         TIndex tailSize = r - blockHead(blockNum - 2);
-        naiveInsertionSort<TValue, TIndex>(
+        naiveInsertionSort<TValue>(
                 elemAt,
                 blockHead(blockNum - 2) - tailSize,
                 blockHead(blockNum - 2) + tailSize);
-        mergeWithAuxSpace<TValue, TIndex>(
+        mergeWithAuxSpace<TValue>(
                 elemAt,
                 blockHead(0),
                 blockHead(blockNum - 2) - tailSize,
                 blockHead(blockNum - 2),
                 blockHead(blockNum - 2));
-        naiveInsertionSort<TValue, TIndex>(
+        naiveInsertionSort<TValue>(
                 elemAt,
                 blockHead(blockNum - 2),
                 blockHead(blockNum - 2) + tailSize);
@@ -151,7 +151,7 @@ struct InplaceMergeSortAlgorithm {
         for (TIndex i = 0; i < numBlocks; i++) {
             TIndex bl = i * NAIVE_INSERT_LIMIT;
             TIndex br = std::min((i + 1) * NAIVE_INSERT_LIMIT, size);
-            naiveInsertionSort<TValue, TIndex>(elemAt, bl, br);
+            naiveInsertionSort<TValue>(elemAt, bl, br);
 
             for (TIndex mergedBlockSize = 2; (i + 1) % mergedBlockSize == 0; mergedBlockSize *= 2) {
                 TIndex l = (i + 1 - mergedBlockSize) * NAIVE_INSERT_LIMIT;
@@ -159,9 +159,9 @@ struct InplaceMergeSortAlgorithm {
                 TIndex r = std::min(m + mergedBlockSize / 2 * NAIVE_INSERT_LIMIT, size);
                 if (l < m && m < r) {
                     if (r - m < size - r) {
-                        mergeWithAuxSpace<TValue, TIndex>(elemAt, l, m, r, r);
+                        mergeWithAuxSpace<TValue>(elemAt, l, m, r, r);
                     } else {
-                        mergeInplace<TValue, TIndex>(elemAt, l, m, r);
+                        mergeInplace<TValue>(elemAt, l, m, r);
                     }
                 }
             }
@@ -184,7 +184,7 @@ struct InplaceMergeSortAlgorithm {
             }
             TIndex l = (numBlocks - b1 - b2) * NAIVE_INSERT_LIMIT;
             TIndex m = (numBlocks - b1) * NAIVE_INSERT_LIMIT;
-            mergeInplace<TValue, TIndex>(elemAt, l, m, size);
+            mergeInplace<TValue>(elemAt, l, m, size);
             numBlocks -= b1;
         }
     }

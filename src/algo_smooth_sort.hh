@@ -86,7 +86,7 @@ struct SmoothSortAlgorithm {
             } else {
                 levels[++topLevel] = 0;
             }
-            fixHeaps<TValue, TIndex>(elemAt, i, topLevel, levels);
+            fixHeaps<TValue>(elemAt, i, topLevel, levels);
         }
 
         for (TIndex i = size - 2; i > 0; i--) {
@@ -96,8 +96,8 @@ struct SmoothSortAlgorithm {
                 levels[topLevel] -= 1;
                 levels[topLevel + 1] = levels[topLevel] - 1;
                 topLevel += 1;
-                fixHeaps<TValue, TIndex>(elemAt, i - getLeonardo(levels[topLevel]), topLevel - 1, levels);
-                fixHeaps<TValue, TIndex>(elemAt, i, topLevel, levels);
+                fixHeaps<TValue>(elemAt, i - getLeonardo(levels[topLevel]), topLevel - 1, levels);
+                fixHeaps<TValue>(elemAt, i, topLevel, levels);
             }
         }
     }

@@ -31,7 +31,7 @@ struct ShellSortAlgorithm {
 
         while (delta > 0) {
             if ((delta /= 2.25) < NAIVE_INSERT_LIMIT) {
-                naiveInsertionSort<TValue, TIndex>(elemAt, 0, size);
+                naiveInsertionSort<TValue>(elemAt, 0, size);
                 return;
             }
 

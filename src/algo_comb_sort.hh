@@ -31,7 +31,7 @@ struct CombSortAlgorithm {
 
         while (true) {
             if ((delta /= 1.3) < 48) {
-                naiveInsertionSort<TValue, TIndex>(elemAt, 0, size);
+                naiveInsertionSort<TValue>(elemAt, 0, size);
                 return;
             }
             for (TIndex i = 0; i + delta < size; i++) {
