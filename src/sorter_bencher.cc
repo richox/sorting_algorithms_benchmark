@@ -14,6 +14,7 @@
 #include "algo_merge_sort.hh"
 #include "algo_smooth_sort.hh"
 #include "algo_inplace_merge_sort.hh"
+#include "algo_multiheap_sort.hh"
 #include "sorter.hh"
 
 struct SorterBencher {
@@ -65,11 +66,12 @@ int main(int argc, char** argv) {
     SorterBencher bencher(benchSize);
     bencher.bench(Sorter<QuickSortAlgorithm>());
     bencher.bench(Sorter<MergeSortAlgorithm>());
-    bencher.bench(Sorter<InplaceMergeSortAlgorithm>());
     bencher.bench(Sorter<HeapSortAlgorithm>());
     bencher.bench(Sorter<ShellSortAlgorithm>());
     bencher.bench(Sorter<CombSortAlgorithm>());
+    bencher.bench(Sorter<InplaceMergeSortAlgorithm>());
     bencher.bench(Sorter<SmoothSortAlgorithm>());
+    bencher.bench(Sorter<MultiheapSortAlgorithm>());
     bencher.bench(Sorter<LibrarySortAlgorithm>());
     return 0;
 }
