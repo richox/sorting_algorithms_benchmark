@@ -24,7 +24,7 @@ struct HeapSortAlgorithm {
         return "No";
     }
 
-    template<typename TValue, typename TIndex, typename TElemAt> void sort(TElemAt elemAt, int size) {
+    template<typename TValue, typename TIndex, typename TElemAt> void sort(TElemAt elemAt, TIndex size) {
         TIndex top = size / 2;
         TIndex bottom = size;
 
