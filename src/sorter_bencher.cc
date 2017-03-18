@@ -32,6 +32,7 @@ struct SorterBencher {
         std::generate_n(std::back_inserter(randomTestDataset), benchSize, randomValueGenerator);
         randomTestDatasetSorted = randomTestDataset;
         std::sort(randomTestDatasetSorted.begin(), randomTestDatasetSorted.end());
+        printBenchHeader();
     }
 
     template<typename Sorter> void bench(Sorter sorter) {
@@ -46,7 +47,7 @@ struct SorterBencher {
         if (dataset != randomTestDatasetSorted) {
             fprintf(stderr, "%s: bad sorting result\n", sorter.getAlgorithmName());
         }
-        fprintf(stderr, "%-16s >> best: %-8s | avg: %-8s | worst: %-8s | space: %-4s | stable: %3s >> cost time: %ldms\n",
+        printBenchRow(
                 sorter.getAlgorithmName(),
                 sorter.getAlgorithmBestTimeComplex(),
                 sorter.getAlgorithmAvgTimeComplex(),
@@ -54,6 +55,37 @@ struct SorterBencher {
                 sorter.getAlgorithmSpaceComplex(),
                 sorter.getStability(),
                 timeCostMillis);
+    }
+
+    void printBenchHeader() {
+        fprintf(stdout, "| %-16s | %-10s | %-10s | %-10s | %-5s | %-6s | %-10s |\n",
+                "algorithm",
+                "best time",
+                "avg time",
+                "worst time",
+                "space",
+                "stable",
+                "time cost");
+        fprintf(stdout, "|-|-|-|-|-|-|-|\n");
+    }
+
+    void printBenchRow(
+            const std::string& algorithmName,
+            const std::string& bestTime,
+            const std::string& avgTime,
+            const std::string& worstTime,
+            const std::string& space,
+            const std::string& stability,
+            long timeCost) {
+
+        fprintf(stdout, "| %-16s | %-10s | %-10s | %-10s | %-5s | %-6s | %8ldms |\n",
+                algorithmName.data(),
+                bestTime.data(),
+                avgTime.data(),
+                worstTime.data(),
+                space.data(),
+                stability.data(),
+                timeCost);
     }
 };
 
