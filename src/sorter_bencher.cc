@@ -58,7 +58,7 @@ struct SorterBencher {
     }
 
     void printBenchHeader() {
-        fprintf(stdout, "| %-16s | %-10s | %-10s | %-10s | %-5s | %-6s | %-10s |\n",
+        fprintf(stdout, "| %-16s | %-10s | %-10s | %-10s | %-5s | %-6s | %-9s |\n",
                 "algorithm",
                 "best time",
                 "avg time",
@@ -78,7 +78,7 @@ struct SorterBencher {
             const std::string& stability,
             long timeCost) {
 
-        fprintf(stdout, "| %-16s | %-10s | %-10s | %-10s | %-5s | %-6s | %8ldms |\n",
+        fprintf(stdout, "| %-16s | %-10s | %-10s | %-10s | %-5s | %-6s | %7ldms |\n",
                 algorithmName.data(),
                 bestTime.data(),
                 avgTime.data(),
