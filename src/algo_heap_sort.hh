@@ -25,7 +25,7 @@ struct HeapSortAlgorithm {
     }
 
     template<typename TValue, typename TIndex, typename TElemAt> void sort(TElemAt elemAt, TIndex size) {
-        TIndex top = size / 2;
+        TIndex top = size / 4;
         TIndex bottom = size;
 
         while (bottom > 0) {
@@ -39,16 +39,17 @@ struct HeapSortAlgorithm {
             TValue topElem = elemAt(top);
             TIndex current = top;
 
-            while (current * 2 + 1 < bottom) {
-                TIndex maxChild = current * 2 + 2 < bottom && elemAt(current * 2 + 2) > elemAt(current * 2 + 1)
-                    ? current * 2 + 2
-                    : current * 2 + 1;
+            while (current * 4 + 1 < bottom) {
+                TIndex maxChild = current * 4 + 1;
+                if (current * 4 + 2 < bottom && elemAt(current * 4 + 2) > elemAt(maxChild)) maxChild = current * 4 + 2;
+                if (current * 4 + 3 < bottom && elemAt(current * 4 + 3) > elemAt(maxChild)) maxChild = current * 4 + 3;
+                if (current * 4 + 4 < bottom && elemAt(current * 4 + 4) > elemAt(maxChild)) maxChild = current * 4 + 4;
                 elemAt(current) = elemAt(maxChild);
                 current = maxChild;
             }
-            while (current > top && elemAt((current - 1) / 2) < topElem) {
-                elemAt(current) = elemAt((current - 1) / 2);
-                current = (current - 1) / 2;
+            while (current > top && elemAt((current - 1) / 4) < topElem) {
+                elemAt(current) = elemAt((current - 1) / 4);
+                current = (current - 1) / 4;
             }
             elemAt(current) = topElem;
         }
