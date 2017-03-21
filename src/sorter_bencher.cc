@@ -1,5 +1,6 @@
 
 #include <cstdio>
+#include <cstdint>
 #include <ctime>
 #include <algorithm>
 #include <vector>
@@ -18,16 +19,33 @@
 #include "sorter.hh"
 
 struct SorterBencher {
-    using TValue = std::pair<long double, long double>;
+    struct SortItem {
+        long double m_k;
+        long double m_v;
+        bool operator <  (const SortItem& that) const { return m_k <  that.m_k; }
+        bool operator <= (const SortItem& that) const { return m_k <= that.m_k; }
+        bool operator >  (const SortItem& that) const { return m_k >  that.m_k; }
+        bool operator >= (const SortItem& that) const { return m_k >= that.m_k; }
+        bool operator == (const SortItem& that) const { return m_k == that.m_k; }
+        bool operator != (const SortItem& that) const { return m_k != that.m_k; }
+    };
+    using TValue = SortItem;
     using TIndex = int;
 
     std::vector<TValue> randomTestDataset;
     std::vector<TValue> randomTestDatasetSorted;
 
     SorterBencher(int benchSize) {
-        auto randomDist = std::bind(std::uniform_real_distribution<long double>(), std::default_random_engine());
+        auto randomDist = std::bind(
+                std::uniform_int_distribution<uint64_t>(0, benchSize),
+                std::default_random_engine());
+        auto randomGenerateCount = 0;
         auto randomValueGenerator = [&]() {
-            return std::make_pair(randomDist(), randomDist());
+            SortItem item = {
+                (long double) randomDist(),
+                (long double) randomGenerateCount++,
+            };
+            return item;
         };
         std::generate_n(std::back_inserter(randomTestDataset), benchSize, randomValueGenerator);
         randomTestDatasetSorted = randomTestDataset;
@@ -44,7 +62,15 @@ struct SorterBencher {
         auto t2 = std::clock();
         auto timeCostMillis = (t2 - t1) * 1000 / CLOCKS_PER_SEC;
 
-        if (dataset != randomTestDatasetSorted) {
+        bool sorted = (dataset == randomTestDatasetSorted);
+        bool stableSorted = true;
+        for (auto i = 1; i < dataset.size(); i++) {
+            if (dataset[i - 1].m_k == dataset[i].m_k && dataset[i - 1].m_v > dataset[i].m_v) {
+                stableSorted = false;
+            }
+        }
+
+        if (!sorted) {
             fprintf(stderr, "%s: bad sorting result\n", sorter.getAlgorithmName());
         }
         printBenchRow(
@@ -53,7 +79,7 @@ struct SorterBencher {
                 sorter.getAlgorithmAvgTimeComplex(),
                 sorter.getAlgorithmWorstTimeComplex(),
                 sorter.getAlgorithmSpaceComplex(),
-                sorter.getStability(),
+                stableSorted ? "YES" : "NO",
                 timeCostMillis);
     }
 

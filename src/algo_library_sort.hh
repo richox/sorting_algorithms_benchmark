@@ -21,9 +21,6 @@ struct LibrarySortAlgorithm {
     static inline const char* getAlgorithmSpaceComplex() {
         return "O(n)";
     }
-    static inline const char* getStability() {
-        return "Yes";
-    }
 
     template <typename TValue, typename TIndex, typename TElemAt> static inline void sort(TElemAt elemAt, TIndex size) {
         TIndex* next = new TIndex[size];
@@ -45,7 +42,7 @@ struct LibrarySortAlgorithm {
                 next[pos] = next[0];
                 next[0] = pos;
             } else {  // insert
-                while (next[r] >= 0 && elemAt(next[r]) < elemAt(pos)) {
+                while (next[r] >= 0 && elemAt(pos) >= elemAt(next[r])) {
                     r = next[r];
                 }
                 next[pos] = next[r];

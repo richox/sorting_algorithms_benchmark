@@ -21,9 +21,6 @@ struct MergeSortAlgorithm {
     static inline const char* getAlgorithmSpaceComplex() {
         return "O(n)";
     }
-    static inline const char* getStability() {
-        return "Yes";
-    }
     static const int NAIVE_INSERT_LIMIT = 16;
 
     template <typename TValue, typename TIndex, typename TElemAt> static inline void sort(TElemAt elemAt, TIndex size) {
@@ -46,13 +43,13 @@ struct MergeSortAlgorithm {
 
                 if (round % 2 == 0) {  // elem -> extra
                     while (pos1 < m && pos2 < r) {
-                        extraSpace[insertPos++] = elemAt(pos1 < m && elemAt(pos1) < elemAt(pos2) ? pos1++ : pos2++);
+                        extraSpace[insertPos++] = elemAt(pos1 < m && elemAt(pos1) <= elemAt(pos2) ? pos1++ : pos2++);
                     }
                     while (pos1 < m) extraSpace[insertPos++] = elemAt(pos1++);
                     while (pos2 < r) extraSpace[insertPos++] = elemAt(pos2++);
                 } else {  // extra -> elem
                     while (pos1 < m && pos2 < r) {
-                        elemAt(insertPos++) = extraSpace[extraSpace[pos1] < extraSpace[pos2] ? pos1++ : pos2++];
+                        elemAt(insertPos++) = extraSpace[extraSpace[pos1] <= extraSpace[pos2] ? pos1++ : pos2++];
                     }
                     while (pos1 < m) elemAt(insertPos++) = extraSpace[pos1++];
                     while (pos2 < r) elemAt(insertPos++) = extraSpace[pos2++];

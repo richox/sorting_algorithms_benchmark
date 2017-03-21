@@ -20,9 +20,6 @@ struct SmoothSortAlgorithm {
     static inline const char* getAlgorithmSpaceComplex() {
         return "O(1)";
     }
-    static inline const char* getStability() {
-        return "No";
-    }
 
     static inline unsigned getLeonardo(int i) {
         static const unsigned leonardo[] = {
