@@ -96,27 +96,35 @@ struct MultiheapSortAlgorithm {
         }
 
         for (int nblock = 0; nblock < numBlocks; nblock++) {  // process from blocks0 to blockS
+            TIndex currentBlockHead = blockHead(nblock);
+            TIndex currentBlockTail = blockTail(nblock);
+
             if (nblock + 1 < numBlocks) {
                 int minBlock = -1;
+                TIndex minBlockHead = -1;
+                TIndex minBlockTail = -1;
 
                 // process each element in first block
-                for (TIndex i = blockHead(nblock); i < blockTail(nblock); i++) {
+                for (TIndex i = currentBlockHead; i < currentBlockTail; i++) {
                     if (minBlock == -1) {
                         minBlock = nblock + 1;
+                        minBlockHead = blockHead(minBlock);
                         for (int b = nblock + 2; b < numBlocks; b++) {  // find max element in heaps
-                            if (elemAt(blockHead(b)) < elemAt(blockHead(minBlock))) {
+                            if (elemAt(blockHead(b)) < elemAt(minBlockHead)) {
                                 minBlock = b;
+                                minBlockHead = blockHead(minBlock);
                             }
                         }
+                        minBlockTail = blockTail(minBlock);
                     }
-                    if (elemAt(blockHead(minBlock)) < elemAt(i)) {  // swap and heapify
-                        std::swap(elemAt(blockHead(minBlock)), elemAt(i));
-                        heapify<TValue>(elemAt, blockHead(minBlock), 0, blockTail(minBlock) - blockHead(minBlock));
+                    if (elemAt(minBlockHead) < elemAt(i)) {  // swap and heapify
+                        std::swap(elemAt(minBlockHead), elemAt(i));
+                        heapify<TValue>(elemAt, minBlockHead, 0, minBlockTail - minBlockHead);
                         minBlock = -1;
                     }
                 }
             }
-            sortImpl<TValue>(elemAt, blockHead(nblock), blockTail(nblock));  // recursive sort each block
+            sortImpl<TValue>(elemAt, currentBlockHead, currentBlockTail);  // recursive sort each block
         }
     }
 
