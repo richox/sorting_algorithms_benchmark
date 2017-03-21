@@ -42,7 +42,7 @@ struct QuickSortAlgorithm {
             if (elemAt(a) > elemAt(b)) std::swap(elemAt(a), elemAt(b));
 
             TIndex l = a + 1;
-            TIndex r = b;
+            TIndex r = b - 1;
             while (l <= r) {
                 while (elemAt(l) < elemAt(a)) l++;
                 while (elemAt(r) > elemAt(a)) r--;
