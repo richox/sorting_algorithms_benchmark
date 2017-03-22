@@ -44,7 +44,7 @@ struct MultiheapSortAlgorithm {
     static inline const char* getAlgorithmSpaceComplex() {
         return "O(1)";
     }
-    static const int NAIVE_INSERT_LIMIT = 64;
+    static const int NAIVE_INSERT_LIMIT = 64;  // insert sort on a small heap is more effective
 
     template<typename TValue, typename TIndex, typename TElemAt> void heapify(
             TElemAt elemAt,
@@ -86,39 +86,53 @@ struct MultiheapSortAlgorithm {
             return i + 1 < numBlocks ? blockHead(i + 1) : to;
         };
 
+
+        struct BlockAndValue {
+            TValue m_value;
+            int m_block;
+
+            bool operator < (const BlockAndValue& that) const {
+                return m_value > that.m_value;  // reversed
+            }
+        } heapedBlocks[numBlocks];
+
+        const auto elemAtHeapBlocks = [&heapedBlocks](int i) -> BlockAndValue& {
+            return heapedBlocks[i];
+        };
+
         for (int nblock = 1; nblock < numBlocks; nblock++) {  // init heap block1 .. blockS
             for (TIndex i = (blockTail(nblock) - blockHead(nblock)) / 2 - 1; i >= 0; i--) {
                 heapify<TValue>(elemAt, blockHead(nblock), i, blockTail(nblock) - blockHead(nblock));
             }
+            heapedBlocks[nblock].m_value = elemAt(blockHead(nblock));
+            heapedBlocks[nblock].m_block = nblock;
+            naiveInsert<BlockAndValue>(elemAtHeapBlocks, 1, nblock);
         }
 
         for (int nblock = 0; nblock < numBlocks; nblock++) {  // process from blocks0 to blockS
             TIndex currentBlockHead = blockHead(nblock);
             TIndex currentBlockTail = blockTail(nblock);
 
-            if (nblock + 1 < numBlocks) {
-                int minBlock = -1;
-                TIndex minBlockHead = -1;
-                TIndex minBlockTail = -1;
+            for (TIndex i = currentBlockHead; i < currentBlockTail; i++) {
+                if (nblock + 1 < numBlocks) {
+                    if (heapedBlocks[numBlocks - 1].m_value < elemAt(i)) {  // swap and heapify
+                        TIndex minBlockHead = blockHead(heapedBlocks[numBlocks - 1].m_block);
+                        TIndex minBlockTail = blockTail(heapedBlocks[numBlocks - 1].m_block);
 
-                // process each element in first block
-                for (TIndex i = currentBlockHead; i < currentBlockTail; i++) {
-                    if (minBlock == -1) {
-                        minBlock = nblock + 1;
-                        minBlockHead = blockHead(minBlock);
-                        for (int b = nblock + 2; b < numBlocks; b++) {  // find max element in heaps
-                            if (elemAt(blockHead(b)) < elemAt(minBlockHead)) {
-                                minBlock = b;
-                                minBlockHead = blockHead(minBlock);
-                            }
-                        }
-                        minBlockTail = blockTail(minBlock);
-                    }
-                    if (elemAt(minBlockHead) < elemAt(i)) {  // swap and heapify
                         std::swap(elemAt(minBlockHead), elemAt(i));
                         heapify<TValue>(elemAt, minBlockHead, 0, minBlockTail - minBlockHead);
-                        minBlock = -1;
+
+                        heapedBlocks[numBlocks - 1].m_value = elemAt(minBlockHead);
+                        naiveInsert<BlockAndValue>(elemAtHeapBlocks, nblock + 1, numBlocks - 1);
                     }
+                }
+            }
+
+            for (int i = nblock + 2; i < numBlocks; i++) {  // remove block from ordered blocks
+                if (heapedBlocks[i].m_block == nblock + 1) {
+                    std::swap(heapedBlocks[i], heapedBlocks[nblock + 1]);
+                    naiveInsert<BlockAndValue>(elemAtHeapBlocks, nblock + 2, i);
+                    break;
                 }
             }
             sortImpl<TValue>(elemAt, currentBlockHead, currentBlockTail);  // recursive sort each block
