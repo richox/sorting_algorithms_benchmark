@@ -114,8 +114,8 @@ struct MultiheapSortAlgorithm {
             TIndex currentBlockHead = blockHead(nblock);
             TIndex currentBlockTail = blockTail(nblock);
 
-            for (TIndex i = currentBlockHead; i < currentBlockTail; i++) {
-                if (nblock + 1 < numBlocks) {
+            if (nblock + 1 < numBlocks) {
+                for (TIndex i = currentBlockHead; i < currentBlockTail; i++) {
                     if (heapedBlocks[numBlocks - 1].m_value < elemAt(i)) {  // swap and heapify
                         TIndex minBlockHead = blockHead(heapedBlocks[numBlocks - 1].m_block);
                         TIndex minBlockTail = blockTail(heapedBlocks[numBlocks - 1].m_block);
@@ -127,13 +127,13 @@ struct MultiheapSortAlgorithm {
                         naiveInsert<BlockAndValue>(elemAtHeapBlocks, nblock + 1, numBlocks - 1);
                     }
                 }
-            }
 
-            for (int i = nblock + 2; i < numBlocks; i++) {  // remove block from ordered blocks
-                if (heapedBlocks[i].m_block == nblock + 1) {
-                    std::swap(heapedBlocks[i], heapedBlocks[nblock + 1]);
-                    naiveInsert<BlockAndValue>(elemAtHeapBlocks, nblock + 2, i);
-                    break;
+                for (int i = nblock + 2; i < numBlocks; i++) {  // remove block from ordered blocks
+                    if (heapedBlocks[i].m_block == nblock + 1) {
+                        std::swap(heapedBlocks[i], heapedBlocks[nblock + 1]);
+                        naiveInsert<BlockAndValue>(elemAtHeapBlocks, nblock + 2, i);
+                        break;
+                    }
                 }
             }
             sortImpl<TValue>(elemAt, currentBlockHead, currentBlockTail);  // recursive sort each block
