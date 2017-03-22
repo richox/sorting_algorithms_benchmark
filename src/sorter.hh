@@ -29,7 +29,7 @@ template <typename SortAlgorithm> struct Sorter {
         typename TIndex = typename It::difference_type> static inline void sort(It begin, It end) {
 
         SortAlgorithm().template sort<TValue, TIndex>(
-                [begin](TIndex i)-> TValue& {
+                [&](TIndex i)-> TValue& {
                     return begin[i];
                 },
                 std::distance(begin, end));
