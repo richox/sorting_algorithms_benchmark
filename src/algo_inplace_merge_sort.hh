@@ -23,7 +23,7 @@ struct InplaceMergeSortAlgorithm {
     static inline const char* getAlgorithmSpaceComplex() {
         return "O(1)";
     }
-    static const int NAIVE_INSERT_LIMIT = 16;
+    static const int NAIVE_INSERT_LIMIT = 32;
 
     template <typename TValue, typename TIndex, typename TElemAt> static inline void swapBlock(
             TElemAt elemAt,
