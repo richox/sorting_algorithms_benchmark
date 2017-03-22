@@ -56,16 +56,17 @@ struct MultiheapSortAlgorithm {
         TValue topElem = elemAt(i);
         TIndex current = i;
 
-        while (current * 2 + 1 < size) {
-            TIndex minChild = current * 2 + 2 < size && elemAt(current * 2 + 2) < elemAt(current * 2 + 1)
-                ? current * 2 + 2
-                : current * 2 + 1;
+        while (current * 4 + 1 < size) {
+            TIndex minChild = current * 4 + 1;
+            if (current * 4 + 2 < size && elemAt(current * 4 + 2) < elemAt(minChild)) minChild = current * 4 + 2;
+            if (current * 4 + 3 < size && elemAt(current * 4 + 3) < elemAt(minChild)) minChild = current * 4 + 3;
+            if (current * 4 + 4 < size && elemAt(current * 4 + 4) < elemAt(minChild)) minChild = current * 4 + 4;
             elemAt(current) = elemAt(minChild);
             current = minChild;
         }
-        while (current > i && elemAt((current - 1) / 2) > topElem) {
-            elemAt(current) = elemAt((current - 1) / 2);
-            current = (current - 1) / 2;
+        while (current > i && elemAt((current - 1) / 4) > topElem) {
+            elemAt(current) = elemAt((current - 1) / 4);
+            current = (current - 1) / 4;
         }
         elemAt(current) = topElem;
 #undef elemAt
@@ -76,7 +77,7 @@ struct MultiheapSortAlgorithm {
             naiveInsertionSort<TValue>(elemAt, from, to);
             return;
         }
-        const TIndex blockSize = (to - from) / std::log2(to - from) * 0.5;
+        const TIndex blockSize = (to - from) / std::log2(to - from) * 0.125;
         const TIndex numBlocks = (to - from) / blockSize + ((to - from) % blockSize != 0);
 
         const auto blockHead = [=](TIndex i) {
@@ -101,7 +102,7 @@ struct MultiheapSortAlgorithm {
         };
 
         for (int nblock = 1; nblock < numBlocks; nblock++) {  // init heap block1 .. blockS
-            for (TIndex i = (blockTail(nblock) - blockHead(nblock)) / 2 - 1; i >= 0; i--) {
+            for (TIndex i = (blockTail(nblock) - blockHead(nblock)) / 4; i >= 0; i--) {
                 heapify<TValue>(elemAt, blockHead(nblock), i, blockTail(nblock) - blockHead(nblock));
             }
             heapedBlocks[nblock].m_value = elemAt(blockHead(nblock));
