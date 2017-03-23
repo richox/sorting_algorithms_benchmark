@@ -87,7 +87,6 @@ struct MultiheapSortAlgorithm {
             return i + 1 < numBlocks ? blockHead(i + 1) : to;
         };
 
-
         struct BlockAndValue {
             TValue m_value;
             int m_block;
@@ -120,9 +119,10 @@ struct MultiheapSortAlgorithm {
                         TIndex minBlockHead = blockHead(heapedBlocks[numBlocks - 1].m_block);
                         TIndex minBlockTail = blockTail(heapedBlocks[numBlocks - 1].m_block);
 
-                        std::swap(elemAt(minBlockHead), elemAt(i));
+                        elemAt(minBlockHead) = elemAt(i);
                         heapify<TValue>(elemAt, minBlockHead, 0, minBlockTail - minBlockHead);
 
+                        elemAt(i) = heapedBlocks[numBlocks - 1].m_value;
                         heapedBlocks[numBlocks - 1].m_value = elemAt(minBlockHead);
                         naiveInsert<BlockAndValue>(elemAtHeapBlocks, nblock + 1, numBlocks - 1);
                     }
@@ -130,7 +130,7 @@ struct MultiheapSortAlgorithm {
 
                 for (int i = nblock + 2; i < numBlocks; i++) {  // remove block from ordered blocks
                     if (heapedBlocks[i].m_block == nblock + 1) {
-                        std::swap(heapedBlocks[i], heapedBlocks[nblock + 1]);
+                        heapedBlocks[i] = heapedBlocks[nblock + 1];
                         naiveInsert<BlockAndValue>(elemAtHeapBlocks, nblock + 2, i);
                         break;
                     }
